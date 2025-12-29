@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "4708830508",
+    "project_id": "mkgo-9088c",
+    "storage_bucket": "mkgo-9088c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:4708830508:android:2169249044fc6434957089",
+        "android_client_info": {
+          "package_name": "cl.retrobox.mkgo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAexxKnhFaYTj1TD0-XUusPHbRZC4oTtLo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
