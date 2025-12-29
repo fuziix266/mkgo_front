@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mkgo/screens/add_review_screen.dart';
+import 'package:mkgo/screens/comments_screen.dart';
 import 'package:mkgo/screens/report_bathroom_screen.dart';
 import 'package:mkgo/screens/reviews_list_screen.dart';
+import 'package:mkgo/screens/upload_photo_screen.dart';
 
 class BathroomDetailsScreen extends StatelessWidget {
   const BathroomDetailsScreen({super.key});
@@ -136,7 +138,7 @@ class BathroomDetailsScreen extends StatelessWidget {
     return Chip(
       avatar: icon != null ? Icon(icon, size: 16) : null,
       label: Text(label),
-      backgroundColor: color.withValues(alpha: 0.1),
+      backgroundColor: color.withOpacity(0.1),
       labelStyle: TextStyle(color: color),
       side: BorderSide.none,
     );
@@ -193,8 +195,24 @@ class BathroomDetailsScreen extends StatelessWidget {
             },
             icon: const Icon(Icons.rate_review),
             label: const Text('Reseñar')),
-        ElevatedButton.icon(onPressed: () {}, icon: const Icon(Icons.chat_bubble), label: const Text('Comentar')),
-        ElevatedButton.icon(onPressed: () {}, icon: const Icon(Icons.add_a_photo), label: const Text('Subir foto')),
+        ElevatedButton.icon(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CommentsScreen()),
+              );
+            },
+            icon: const Icon(Icons.chat_bubble),
+            label: const Text('Comentar')),
+        ElevatedButton.icon(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const UploadPhotoScreen(), fullscreenDialog: true),
+              );
+            },
+            icon: const Icon(Icons.add_a_photo),
+            label: const Text('Subir foto')),
         ElevatedButton.icon(
             onPressed: () {
               showModalBottomSheet(

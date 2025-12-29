@@ -147,7 +147,7 @@ class AddNewBathroomScreen extends StatelessWidget {
       height: 128,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey, style: BorderStyle.solid), // TODO: Implement dashed border properly
+        border: Border.all(color: Colors.grey, style: BorderStyle.dashed),
       ),
       child: const Center(
         child: Column(

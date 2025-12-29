@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mkgo/screens/bathroom_details_screen.dart';
 import 'package:mkgo/screens/filters_screen.dart';
+import 'package:mkgo/screens/profile_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -31,8 +33,8 @@ class HomeScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Theme.of(context).colorScheme.surface.withValues(alpha: 0.9),
-                    Theme.of(context).colorScheme.surface.withValues(alpha: 0.0)
+                    Theme.of(context).colorScheme.surface.withOpacity(0.9),
+                    Theme.of(context).colorScheme.surface.withOpacity(0.0)
                   ],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
@@ -48,7 +50,7 @@ class HomeScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.1),
+                            color: Colors.black.withOpacity(0.1),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -81,22 +83,30 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.1),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: const CircleAvatar(
-                      backgroundImage: NetworkImage('https://lh3.googleusercontent.com/a/ACg8ocK_gL6Zc7ojVu5t_Lifaq6P9C1NjVqa8UNQNGnWLKZDf7Lc=s96-c'),
+                  GestureDetector(
+                    onTap: () {
+                      // Find the Scaffold's state and control the BottomNavigationBar
+                      final mainScreenScaffold = Scaffold.of(context);
+                      // This is a bit of a hack. A better solution would be to use a proper state management solution.
+                      // For now, we'll just assume the ProfileScreen is the last item.
+                    },
+                    child: Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: const CircleAvatar(
+                        backgroundImage: NetworkImage('https://lh3.googleusercontent.com/a/ACg8ocK_gL6Zc7ojVu5t_Lifaq6P9C1NjVqa8UNQNGnWLKZDf7Lc=s96-c'),
+                      ),
                     ),
                   ),
                 ],
@@ -146,7 +156,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.15),
+                    color: Colors.black.withOpacity(0.15),
                     blurRadius: 24,
                     offset: const Offset(0, -4),
                   ),
@@ -219,7 +229,12 @@ class HomeScreen extends StatelessWidget {
                       ),
                       const SizedBox(width: 12),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const BathroomDetailsScreen()),
+                          );
+                        },
                         icon: const Icon(Icons.info),
                         style: IconButton.styleFrom(
                           padding: const EdgeInsets.all(16),
