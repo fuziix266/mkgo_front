@@ -136,7 +136,7 @@ class BathroomDetailsScreen extends StatelessWidget {
     return Chip(
       avatar: icon != null ? Icon(icon, size: 16) : null,
       label: Text(label),
-      backgroundColor: color.withOpacity(0.1),
+      backgroundColor: color.withValues(alpha: 0.1),
       labelStyle: TextStyle(color: color),
       side: BorderSide.none,
     );

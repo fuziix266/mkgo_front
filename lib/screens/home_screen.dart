@@ -31,8 +31,8 @@ class HomeScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Theme.of(context).colorScheme.surface.withOpacity(0.9),
-                    Theme.of(context).colorScheme.surface.withOpacity(0.0)
+                    Theme.of(context).colorScheme.surface.withValues(alpha: 0.9),
+                    Theme.of(context).colorScheme.surface.withValues(alpha: 0.0)
                   ],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
@@ -48,7 +48,7 @@ class HomeScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withValues(alpha: 0.1),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -89,7 +89,7 @@ class HomeScreen extends StatelessWidget {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withValues(alpha: 0.1),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -146,7 +146,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.15),
+                    color: Colors.black.withValues(alpha: 0.15),
                     blurRadius: 24,
                     offset: const Offset(0, -4),
                   ),

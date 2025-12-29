@@ -63,7 +63,7 @@ class TermsScreen extends StatelessWidget {
             right: 0,
             child: Container(
               padding: const EdgeInsets.all(16),
-              color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9),
+              color: Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.9),
               child: Column(
                 children: [
                   ElevatedButton(
