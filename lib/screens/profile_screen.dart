@@ -1,11 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:mkgo/screens/edit_profile_screen.dart';
 import 'package:mkgo/screens/help_screen.dart';
 import 'package:mkgo/screens/my_reviews_screen.dart';
 import 'package:mkgo/screens/my_saved_bathrooms_screen.dart';
+import 'package:mkgo/screens/sent_reports_screen.dart';
 import 'package:mkgo/screens/settings_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
+
+  Future<void> _showLogoutConfirmation(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // User must tap button
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Cerrar Sesión'),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('¿Estás seguro de que quieres cerrar la sesión?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Cerrar Sesión'),
+              onPressed: () {
+                // Logic to log out
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +52,12 @@ class ProfileScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const EditProfileScreen()),
+              );
+            },
           ),
         ],
       ),
@@ -68,7 +109,7 @@ class ProfileScreen extends StatelessWidget {
               _buildGeneralSection(context),
               const SizedBox(height: 32),
               ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () => _showLogoutConfirmation(context),
                 icon: const Icon(Icons.logout),
                 label: const Text('Cerrar sesión'),
                 style: ElevatedButton.styleFrom(
@@ -124,7 +165,12 @@ class ProfileScreen extends StatelessWidget {
             );
           }),
           const Divider(height: 1),
-          _buildListTile(Icons.send, 'Reportes enviados', () {}),
+          _buildListTile(Icons.send, 'Reportes enviados', () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const SentReportsScreen()),
+            );
+          }),
         ],
       ),
     );

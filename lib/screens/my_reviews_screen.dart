@@ -3,6 +3,41 @@ import 'package:flutter/material.dart';
 class MyReviewsScreen extends StatelessWidget {
   const MyReviewsScreen({super.key});
 
+  Future<void> _showDeleteConfirmation(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // User must tap button
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Eliminar Reseña'),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('¿Estás seguro de que quieres eliminar esta reseña?'),
+                Text('Esta acción no se puede deshacer.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Eliminar', style: TextStyle(color: Colors.red)),
+              onPressed: () {
+                // Logic to delete the review
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -132,7 +167,7 @@ class MyReviewsScreen extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 TextButton.icon(
-                  onPressed: () {},
+                  onPressed: () => _showDeleteConfirmation(context),
                   icon: const Icon(Icons.delete, size: 16),
                   label: const Text('Eliminar'),
                   style: TextButton.styleFrom(foregroundColor: Colors.red),

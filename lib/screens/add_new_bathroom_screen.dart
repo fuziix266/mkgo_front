@@ -1,7 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 
-class AddNewBathroomScreen extends StatelessWidget {
+class AddNewBathroomScreen extends StatefulWidget {
   const AddNewBathroomScreen({super.key});
+
+  @override
+  State<AddNewBathroomScreen> createState() => _AddNewBathroomScreenState();
+}
+
+class _AddNewBathroomScreenState extends State<AddNewBathroomScreen> {
+  LatLng _selectedLocation = LatLng(51.509364, -0.128928);
+  final MapController _mapController = MapController();
+  String _selectedAccessType = 'Público';
 
   @override
   Widget build(BuildContext context) {
@@ -19,11 +30,38 @@ class AddNewBathroomScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Map Section
-            Container(
+            SizedBox(
               height: 224,
-              color: Colors.grey[300],
-              child: const Center(
-                child: Icon(Icons.map, size: 100, color: Colors.grey),
+              child: Stack(
+                children: [
+                  FlutterMap(
+                    mapController: _mapController,
+                    options: MapOptions(
+                      center: _selectedLocation,
+                      zoom: 13.0,
+                      onPositionChanged: (position, hasGesture) {
+                        if (hasGesture) {
+                          setState(() {
+                            _selectedLocation = position.center!;
+                          });
+                        }
+                      },
+                    ),
+                    children: [
+                      TileLayer(
+                        urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                        subdomains: const ['a', 'b', 'c'],
+                      ),
+                    ],
+                  ),
+                  const Center(
+                    child: Icon(
+                      Icons.location_pin,
+                      color: Colors.red,
+                      size: 40,
+                    ),
+                  ),
+                ],
               ),
             ),
             Padding(
@@ -107,12 +145,36 @@ class AddNewBathroomScreen extends StatelessWidget {
   }
 
   Widget _buildAccessTypeOption(IconData icon, String label) {
-    return Column(
-      children: [
-        Icon(icon, size: 32),
-        const SizedBox(height: 4),
-        Text(label, style: const TextStyle(fontSize: 12)),
-      ],
+    final bool isSelected = _selectedAccessType == label;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedAccessType = label;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: isSelected ? Theme.of(context).primaryColor.withOpacity(0.1) : null,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected ? Theme.of(context).primaryColor : Colors.grey[300]!,
+          ),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, size: 32, color: isSelected ? Theme.of(context).primaryColor : Colors.grey[700]),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                color: isSelected ? Theme.of(context).primaryColor : Colors.grey[700],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -147,7 +209,7 @@ class AddNewBathroomScreen extends StatelessWidget {
       height: 128,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey, style: BorderStyle.solid), // TODO: Implement dashed border properly
+        border: Border.all(color: Colors.grey, style: BorderStyle.dashed),
       ),
       child: const Center(
         child: Column(

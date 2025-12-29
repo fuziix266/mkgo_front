@@ -126,7 +126,7 @@ class ReviewsListScreen extends StatelessWidget {
                                 child: Chip(
                                   label: const Text('Tu reseña', style: TextStyle(fontSize: 10)),
                                   padding: EdgeInsets.zero,
-                                  backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
+                                  backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
                                 ),
                               ),
                           ],

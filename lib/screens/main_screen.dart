@@ -13,12 +13,6 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  static const List<Widget> _widgetOptions = <Widget>[
-    HomeScreen(),
-    MySavedBathroomsScreen(),
-    ProfileScreen(),
-  ];
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -27,9 +21,17 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // We need to pass the callback to the HomeScreen.
+    // We can do this by rebuilding the list of widgets every time.
+    final List<Widget> widgetOptions = <Widget>[
+      HomeScreen(onProfileTap: () => _onItemTapped(2)),
+      const MySavedBathroomsScreen(),
+      const ProfileScreen(),
+    ];
+
     return Scaffold(
       body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
+        child: widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[

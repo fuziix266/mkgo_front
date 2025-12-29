@@ -54,7 +54,7 @@ class _ReportBathroomScreenState extends State<ReportBathroomScreen> {
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      color: isSelected ? Theme.of(context).primaryColor.withValues(alpha: 0.1) : Colors.grey[100],
+                      color: isSelected ? Theme.of(context).primaryColor.withOpacity(0.1) : Colors.grey[100],
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: isSelected ? Theme.of(context).primaryColor : Colors.grey[300]!,

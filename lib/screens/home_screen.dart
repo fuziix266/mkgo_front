@@ -1,24 +1,72 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:mkgo/screens/bathroom_details_screen.dart';
 import 'package:mkgo/screens/filters_screen.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  final VoidCallback onProfileTap;
+  const HomeScreen({super.key, required this.onProfileTap});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  LatLng _currentCenter = LatLng(51.509364, -0.128928); // Default to London
+
+  @override
+  void initState() {
+    super.initState();
+    _determinePosition();
+  }
+
+  Future<void> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+        'Location permissions are permanently denied, we cannot request permissions.');
+    }
+
+    Position position = await Geolocator.getCurrentPosition();
+    setState(() {
+      _currentCenter = LatLng(position.latitude, position.longitude);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          // Map Placeholder
-          Container(
-            color: Colors.grey[300],
-            child: const Center(
-              child: Icon(
-                Icons.map,
-                size: 100,
-                color: Colors.grey,
-              ),
+          // Map
+          FlutterMap(
+            options: MapOptions(
+              center: _currentCenter,
+              zoom: 10.0,
             ),
+            children: [
+              TileLayer(
+                urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                subdomains: const ['a', 'b', 'c'],
+              ),
+            ],
           ),
 
           // Top Search Bar Area
@@ -31,8 +79,8 @@ class HomeScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Theme.of(context).colorScheme.surface.withValues(alpha: 0.9),
-                    Theme.of(context).colorScheme.surface.withValues(alpha: 0.0)
+                    Theme.of(context).colorScheme.surface.withOpacity(0.9),
+                    Theme.of(context).colorScheme.surface.withOpacity(0.0)
                   ],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
@@ -48,7 +96,7 @@ class HomeScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.1),
+                            color: Colors.black.withOpacity(0.1),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -81,22 +129,25 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.1),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: const CircleAvatar(
-                      backgroundImage: NetworkImage('https://lh3.googleusercontent.com/a/ACg8ocK_gL6Zc7ojVu5t_Lifaq6P9C1NjVqa8UNQNGnWLKZDf7Lc=s96-c'),
+                  GestureDetector(
+                    onTap: widget.onProfileTap,
+                    child: Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: const CircleAvatar(
+                        backgroundImage: NetworkImage('https://lh3.googleusercontent.com/a/ACg8ocK_gL6Zc7ojVu5t_Lifaq6P9C1NjVqa8UNQNGnWLKZDf7Lc=s96-c'),
+                      ),
                     ),
                   ),
                 ],
@@ -146,7 +197,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.15),
+                    color: Colors.black.withOpacity(0.15),
                     blurRadius: 24,
                     offset: const Offset(0, -4),
                   ),
@@ -219,7 +270,12 @@ class HomeScreen extends StatelessWidget {
                       ),
                       const SizedBox(width: 12),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const BathroomDetailsScreen()),
+                          );
+                        },
                         icon: const Icon(Icons.info),
                         style: IconButton.styleFrom(
                           padding: const EdgeInsets.all(16),
