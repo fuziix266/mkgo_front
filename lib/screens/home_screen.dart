@@ -1,26 +1,72 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:mkgo/screens/bathroom_details_screen.dart';
 import 'package:mkgo/screens/filters_screen.dart';
-import 'package:mkgo/screens/profile_screen.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  final VoidCallback onProfileTap;
+  const HomeScreen({super.key, required this.onProfileTap});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  LatLng _currentCenter = LatLng(51.509364, -0.128928); // Default to London
+
+  @override
+  void initState() {
+    super.initState();
+    _determinePosition();
+  }
+
+  Future<void> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+        'Location permissions are permanently denied, we cannot request permissions.');
+    }
+
+    Position position = await Geolocator.getCurrentPosition();
+    setState(() {
+      _currentCenter = LatLng(position.latitude, position.longitude);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          // Map Placeholder
-          Container(
-            color: Colors.grey[300],
-            child: const Center(
-              child: Icon(
-                Icons.map,
-                size: 100,
-                color: Colors.grey,
-              ),
+          // Map
+          FlutterMap(
+            options: MapOptions(
+              center: _currentCenter,
+              zoom: 10.0,
             ),
+            children: [
+              TileLayer(
+                urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                subdomains: const ['a', 'b', 'c'],
+              ),
+            ],
           ),
 
           // Top Search Bar Area
@@ -84,12 +130,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(width: 12),
                   GestureDetector(
-                    onTap: () {
-                      // Find the Scaffold's state and control the BottomNavigationBar
-                      final mainScreenScaffold = Scaffold.of(context);
-                      // This is a bit of a hack. A better solution would be to use a proper state management solution.
-                      // For now, we'll just assume the ProfileScreen is the last item.
-                    },
+                    onTap: widget.onProfileTap,
                     child: Container(
                       width: 48,
                       height: 48,
