@@ -80,7 +80,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
 
                   // Status Switches
                   _buildSectionTitle('Estado'),
-                  _buildSwitchTile(Icons.door_open, 'Abierto ahora', _isOpenNow, (value) {
+                  _buildSwitchTile(Icons.meeting_room, 'Abierto ahora', _isOpenNow, (value) {
                     setState(() {
                       _isOpenNow = value;
                     });
@@ -115,7 +115,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
           child: TextButton(
             onPressed: () {},
             style: TextButton.styleFrom(
-              backgroundColor: options.indexOf(option) == 0 ? Theme.of(context).primaryColor.withOpacity(0.1) : null,
+              backgroundColor: options.indexOf(option) == 0 ? Theme.of(context).primaryColor.withValues(alpha: 0.1) : null,
             ),
             child: Text(option),
           ),

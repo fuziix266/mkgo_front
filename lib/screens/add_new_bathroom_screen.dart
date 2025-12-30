@@ -37,8 +37,8 @@ class _AddNewBathroomScreenState extends State<AddNewBathroomScreen> {
                   FlutterMap(
                     mapController: _mapController,
                     options: MapOptions(
-                      center: _selectedLocation,
-                      zoom: 13.0,
+                      initialCenter: _selectedLocation,
+                      initialZoom: 13.0,
                       onPositionChanged: (position, hasGesture) {
                         if (hasGesture) {
                           setState(() {
@@ -155,7 +155,7 @@ class _AddNewBathroomScreenState extends State<AddNewBathroomScreen> {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isSelected ? Theme.of(context).primaryColor.withOpacity(0.1) : null,
+          color: isSelected ? Theme.of(context).primaryColor.withValues(alpha: 0.1) : null,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isSelected ? Theme.of(context).primaryColor : Colors.grey[300]!,
@@ -209,7 +209,7 @@ class _AddNewBathroomScreenState extends State<AddNewBathroomScreen> {
       height: 128,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey, style: BorderStyle.dashed),
+        border: Border.all(color: Colors.grey, style: BorderStyle.solid),
       ),
       child: const Center(
         child: Column(

@@ -84,7 +84,7 @@ class ReportCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CircleAvatar(
-                  backgroundColor: iconColor.withOpacity(0.1),
+                  backgroundColor: iconColor.withValues(alpha: 0.1),
                   child: Icon(icon, color: iconColor),
                 ),
                 const SizedBox(width: 12),
@@ -101,7 +101,7 @@ class ReportCard extends StatelessWidget {
                 ),
                 Chip(
                   label: Text(status, style: const TextStyle(fontSize: 10)),
-                  backgroundColor: statusColor.withOpacity(0.1),
+                  backgroundColor: statusColor.withValues(alpha: 0.1),
                   labelStyle: TextStyle(color: statusColor),
                   side: BorderSide.none,
                 ),

@@ -15,6 +15,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   LatLng _currentCenter = LatLng(51.509364, -0.128928); // Default to London
+  LatLng? _currentPosition; // User's actual position
+  final MapController _mapController = MapController();
 
   @override
   void initState() {
@@ -23,31 +25,66 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _determinePosition() async {
-    bool serviceEnabled;
-    LocationPermission permission;
+    try {
+      bool serviceEnabled;
+      LocationPermission permission;
 
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
-    }
+      serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Los servicios de ubicación están deshabilitados')),
+          );
+        }
+        return;
+      }
 
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
+      permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Permisos de ubicación denegados')),
+            );
+          }
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Permisos de ubicación denegados permanentemente')),
+          );
+        }
+        return;
+      }
+
+      Position position = await Geolocator.getCurrentPosition();
+      setState(() {
+        _currentCenter = LatLng(position.latitude, position.longitude);
+        _currentPosition = LatLng(position.latitude, position.longitude);
+      });
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error obteniendo ubicación: $e')),
+        );
       }
     }
+  }
 
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error(
-        'Location permissions are permanently denied, we cannot request permissions.');
+  void _centerOnUserLocation() async {
+    if (_currentPosition != null) {
+      _mapController.move(_currentPosition!, 15.0);
+    } else {
+      // Try to get position again
+      await _determinePosition();
+      if (_currentPosition != null) {
+        _mapController.move(_currentPosition!, 15.0);
+      }
     }
-
-    Position position = await Geolocator.getCurrentPosition();
-    setState(() {
-      _currentCenter = LatLng(position.latitude, position.longitude);
-    });
   }
 
   @override
@@ -57,15 +94,44 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           // Map
           FlutterMap(
+            mapController: _mapController,
             options: MapOptions(
-              center: _currentCenter,
-              zoom: 10.0,
+              initialCenter: _currentCenter,
+              initialZoom: 15.0,
             ),
             children: [
               TileLayer(
                 urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                 subdomains: const ['a', 'b', 'c'],
               ),
+              // User location marker
+              if (_currentPosition != null)
+                MarkerLayer(
+                  markers: [
+                    Marker(
+                      point: _currentPosition!,
+                      width: 40,
+                      height: 40,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.blue.withValues(alpha: 0.3),
+                          border: Border.all(
+                            color: Colors.white,
+                            width: 3,
+                          ),
+                        ),
+                        child: Container(
+                          margin: const EdgeInsets.all(8),
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
             ],
           ),
 
@@ -79,8 +145,8 @@ class _HomeScreenState extends State<HomeScreen> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Theme.of(context).colorScheme.surface.withOpacity(0.9),
-                    Theme.of(context).colorScheme.surface.withOpacity(0.0)
+                    Theme.of(context).colorScheme.surface.withValues(alpha: 0.9),
+                    Theme.of(context).colorScheme.surface.withValues(alpha: 0.0)
                   ],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
@@ -96,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: Colors.black.withValues(alpha: 0.1),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -139,7 +205,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: Colors.black.withValues(alpha: 0.1),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -162,7 +228,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               children: [
                 FloatingActionButton(
-                  onPressed: () {},
+                  onPressed: _centerOnUserLocation,
                   heroTag: 'location',
                   child: const Icon(Icons.my_location),
                 ),
@@ -197,7 +263,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.15),
+                    color: Colors.black.withValues(alpha: 0.15),
                     blurRadius: 24,
                     offset: const Offset(0, -4),
                   ),
